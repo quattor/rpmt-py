@@ -1,0 +1,261 @@
+=pod
+
+=head1 NAME
+
+rpmt-py - A transactional RPM (Python version)
+
+
+
+=head1 SYNOPSIS
+
+rpmt-py [OPTIONS]
+
+
+
+=head1 DESCRIPTION
+
+rpmt-py is a tool to install, upgrade and erase RPM packages in one 
+transaction, thus allow package sets with complex dependencies to be 
+processed at once while keeping the system in a consistent state.
+
+There was a need for such a program, because the classic front-end to
+the RPM package manager (B<rpm>) only allows one type of such action
+in a transaction.
+
+rpmt-py is part of the Quattor administration toolkit, see
+L<http://quattor.org> for more information about rpmt-py and Quattor.
+
+rpmt-py is inspired on RedHat's rpm and based on rpm-python binding library 
+(itself based on rpmlib).
+
+
+
+=head1 GENERAL OPTIONS
+
+=over 15
+
+=item B<-h, --help>
+
+Print the complete usage message (default if no option is specified).
+
+=item B<-V, --version>
+
+Print version number of rpmt-py being used.
+
+=item B<-q, --quiet>
+
+Provide less detailed output.
+
+=item B<-v, --verbose>
+
+Provide more detailed output.
+
+=item B<--dbpath=DIR>
+
+Use database in B<DIR> instead of default path.
+
+=item B<-rROOT, --root=ROOT>
+
+Use B<ROOT> as top level directory (default is /).
+
+
+
+=head1 INSTALL AND UPGRADE OPTIONS
+
+=item B<--allfiles>
+
+Install all files, even conf. which might otherwise be skipped.
+
+=item B<--excludedocs>
+
+Do not install documentation.
+
+=item B<--force>
+
+Short hand for B<--replacepkgs> B<--replacefiles>.
+
+=item B<--ignoresize>
+
+Do not check disk space before installing.
+
+=item B<--ignorearch>
+
+Do not verify package architecture.
+
+=item B<--ignoreos>
+
+Do not verify package operating system.
+
+=item B<--justdb>
+
+Update the database, but do not modify the filesystem.
+
+=item B<--nodeps>
+
+Do not verify package dependencies.
+
+=item B<--noorder>
+
+Do not reorder package installation to satisfy dependencies.
+
+=item B<--noscripts>
+
+Do not execute package scriptlet(s).
+
+=item B<--notriggers>
+
+Do not execute any scriptlet(s) triggered by package(s).
+
+=item B<--repackage>
+
+Re-package files before erasing.
+
+=item B<--replacefiles>
+
+Install even if the package replaces installed files.
+
+=item B<--replacepkgs>
+
+Re-install if the package is already present.
+
+=item B<--test>
+
+Do not install, but tell if it would work or not.
+
+
+
+=head1 ERASE OPTIONS
+
+=item B<--nodeps>
+
+See above.
+
+=item B<--noscripts>
+
+See above.
+
+=item B<--notriggers>
+
+See above.
+
+=item B<--repackage>
+
+See above.
+
+=item B<--test>
+
+See above.
+
+
+
+=head1 CACHE OPTIONS
+
+Those options are used when remote packages are included in the input (actions) file.
+By default, the cache is cleaned after each transaction.
+
+=item B<--cachedir=CACHEDIR>
+
+Use B<CACHEDIR> when retrieving remote packages (default is /var/cache/rpmt/).
+
+=item B<--noclean>
+
+Do not clean the cache after running the transaction set, even if the transaction fails. (N.B. as of version 1.0.2 the default behaviour is to leave the cache intact if the transaction fails.)
+
+=item B<--forceclean>
+
+Always clean the cache after running the transaction set, even if the transaction fails.
+
+=head1 PROXY OPTIONS
+
+The following options are related to the use of proxies.
+
+=item B<--revproxy=revproxy1.com,revproxy2.org,...>
+
+Use reverse proxy servers in priority when retrieving remote packages.
+This option is used to specify alternative proxy servers where downloading remote packages is required.
+These proxies are used before the original server specified by the remote package url (within the action file).
+
+=item B<--ftpproxy=HOST>
+
+The host HOST will be used as a proxy server for all ftp transfers, 
+which allows users to ftp through firewall machines  which use  proxy systems.
+
+=item B<--ftpport=PORT>
+
+The TCP PORT number to use for the ftp connection on  the  proxy ftp  server instead of the default port.
+
+=item B<--httpproxy=HOST>
+
+The host HOST will be used as a proxy server for all http transfers.
+
+=item B<--httpport=PORT>
+
+The TCP PORT number to use for the http connection on the  proxy http server instead of the default port.
+
+
+
+=head1 VERIFICATION OPTIONS
+
+=item B<--nodigest>
+
+Do not verify package digest(s).
+
+=item B<--nosignature>
+
+Do not verify package signature(s).
+
+
+
+=head1 INPUT FILE OPTION
+
+=item B<-iFILE, --in=FILE>
+
+The input file describing each action of the transaction to run (See below).
+
+
+
+=head1 INPUT FILE FORMAT
+
+Each line describes a transaction action (install, up/downgrade, erase).
+Empty lines and lines beginning with a # are ignored.
+
+A action line must be in one of the following formats:
+
+=item B<-i> I<file> 
+
+Install package in I<file>.
+
+=item B<-u> I<file>
+
+Upgrade or downgrade package in I<file>.
+
+=item B<-e> I<package>
+
+Erase I<package>.
+
+=back
+
+You may use URLs in place of I<file>s.
+
+
+=head1 DIAGNOSTICS
+
+Exit status is normally 0; if an error occurs, exit status is 1.
+
+=head1 AUTHOR
+
+Inspired on rpmt (ANSI/C version) written by Andras NAGY 
+E<lt>F<Andras.Nagy@cern.ch>E<gt>
+
+Port to rpmlib 4.0.4 by German Cancio 
+E<lt>F<german.cancio@cern.ch>E<gt>
+
+Re-engineered to rpmlib 4.2.1 by Rafael A. Garcia Leiva 
+E<lt>F<angel.leiva@uam.es>E<gt>
+
+Re-engineered in Python (using rpm-python) by Nicolas Pinto.
+
+E<lt>F<nicolas.pinto@utbm.fr>E<gt>
+
+
+=cut

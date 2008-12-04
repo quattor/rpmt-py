@@ -1,0 +1,85 @@
+2008-10-17  "Luis Fernando"
+
+	* Release: 1.0.3
+	- Fixed bug #42303.
+
+2008-07-25  Stephen Childs
+
+	* Release: 1.0.2
+	- Don't clean the cache by default if the transaction fails. (#39287)
+
+2007-11-09  German Cancio Melia
+
+	* Release: 1.0.1
+	- Remove obsolete provides for rpmt
+
+2006-05-26  Marco Emilio Poleggi
+
+        * Release: 1.0.0
+        - Tested and stable. Bumping up version for quattor release
+
+2005-09-21  Nicolas PINTO
+
+        * Release: 0.0.14
+        - --ftpproxy, --ftpport, --httpproxy, --httpport added (see the manpage for more informations)
+
+2005-09-16  Nicolas PINTO
+
+        * Release: 0.0.13
+        - --proxy=<server1.com,server2.org,...> feature added
+
+2005-08-15  German Cancio Melia
+
+        * Release: 0.0.12
+        - Minor change - added POD documentation to configuration (.cin)
+
+2005-08-01  Nicolas PINTO
+
+        * Release: 0.0.11
+        - manpage, README, epydoc added
+
+2005-07-28  Nicolas PINTO
+
+        * Release: 0.0.10
+        - --dbpath added 
+	- no action file bug corrected
+
+2005-07-27  Nicolas PINTO
+
+        * Release: 0.0.9
+        - Bug corrections : cache dir cleaning, etc.
+
+2005-07-27  Nicolas PINTO
+
+        * Release: 0.0.8
+        - --noclean option added
+
+2005-07-27  Nicolas PINTO
+
+        * Release: 0.0.7
+        - The transaction correctly cleans up the cache directory now...
+
+2005-07-27  Nicolas PINTO
+
+        * Release: 0.0.5
+        - Version correction (@VERSION@) :d
+
+2005-07-27  Nicolas PINTO
+
+        * Release: 0.0.4
+        - Cache dir modifications and small bugs corrections
+
+2005-07-27  German Cancio Melia
+
+        * Release: 0.0.3
+        - Small modifs (eg. adding cache directory)
+
+2005-07-27  German Cancio Melia
+
+        * Release: 0.0.2
+        - first version quattorized
+
+2005-07-27 German
+ 
+        * first version in CVS
+

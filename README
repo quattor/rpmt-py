@@ -1,0 +1,40 @@
+rpmt-py - A transactional RPM (Python version)
+==============================================
+
+
+1. Presentation 
+---------------
+
+rpmt-py is a tool to install, upgrade and erase RPM packages in one transaction, 
+thus allow package sets with complex dependencies to be processed at once while 
+keeping the system in a consistent state.
+
+There was a need for such a program, because the classic front-end to the RPM 
+package manager (rpm) only allows one type of such action in a transaction.
+
+rpmt-py is part of the Quattor administration toolkit, see http://quattor.org 
+for more information about rpmt-py and Quattor.
+
+rpmt-py is inspired on RedHat's rpm and based on rpm-python binding library 
+(itself based on rpmlib).
+
+
+2. Differences with the 'old' rpmt (ANSI/C version 4.2.1)
+---------------------------------------------------------
+
+- Input file (transaction actions) is now specified using -iFILE or --in=FILE.	
+
+- Now the --oldpackage option is assumed for the whole transaction.
+
+- The cache directory for downloading remote files can now be specified using
+the --cachedir option. In addition, we can avoid the clean up of this directory
+by using the --noclean option.
+
+
+
+===
+
+For more information about rpmt-py, please check its man page.
+
+Nicolas Pinto <nicolas dot pinto at cern dot ch>
+

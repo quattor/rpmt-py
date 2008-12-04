@@ -1,0 +1,192 @@
+#!/usr/bin/python -tt
+# -- coding: iso8859-1
+
+""" RPMT-PY Main Module.
+
+This module is the heart of the rpmt tool.
+It combines all other modules and performs the following actions :
+
+ 1. First, it parses the command line using the L{rpmt_OptionParser} module and set the transaction flags according to it.
+ 2. Then, it parses the given action file using the L{rpmt_ActionsSet} module and handles each action.
+ 3. Finally, it runs the transaction using the L{rpmt_Transaction} module.
+
+@requires: python2.2+
+"""
+
+import os, sys
+import rpm
+
+sys.path.append('@QTTR_PYTHLIB@/rpmt')
+import rpmt_OptionParser
+import rpmt_ActionsSet
+import rpmt_Transaction
+
+__version__ = "@VERSION@"
+
+if __name__=="__main__":
+
+    ##########################################
+    # 1. parse the command line
+    ##########################################
+    r = rpmt_OptionParser.rpmtOptionParser()
+    
+    try:
+        optdict = r.parse_arguments()
+    except SystemExit, msg:
+        sys.exit(msg)
+    except Exception, err:
+        sys.exit("error: %s\nsee --help for usage" % err)
+        
+    interface_flags = 0
+    rpmts_flags = 0
+    rpmprob_filter = rpm.RPMPROB_FILTER_OLDPACKAGE # --oldpackage is assumed
+    vsflags = 0    
+    verbose = 0
+    rootdir = '/'
+    cachedir = '/var/cache/rpmt/'
+    file = ""
+    revproxylist = []
+    proxy_info = {}
+
+    # general options
+    if optdict['version']:
+        print "RPMT-PY version %s" % __version__
+        sys.exit(0)
+    if optdict['quiet']:
+        rpm.setVerbosity(rpm.RPMLOG_WARNING)
+    if optdict['verbose']:
+        verbose = 1
+        rpm.setVerbosity(rpm.RPMLOG_INFO)
+    if optdict['dbpath']:
+        rpm.addMacro("_dbpath", optdict['dbpath'])
+    if optdict['root']:
+        rootdir = optdict['root']
+    if optdict['cachedir']:
+        tmpdir = optdict['cachedir']
+
+    # proxy options
+    if optdict['revproxy']:
+        proxylist = optdict['revproxy'].split(',')
+        
+    if optdict['httpproxy']:
+        httpproxy = optdict['httpproxy']
+        if optdict['httpport']:
+            httpport = optdict['httpport']
+        else:
+            httpport = '80'
+        proxy_info['http']="http://%s:%s" % (httpproxy, httpport)
+
+    if optdict['ftpproxy']:
+        ftpproxy = optdict['ftpproxy']
+        if optdict['ftpport']:
+            ftpport = optdict['ftpport']
+        else:
+            ftpport = '21'
+        proxy_info['ftp']="ftp://%s:%s" % (ftpproxy, ftpport)
+        
+    # input file (actions)
+    if optdict['input']:
+        file = optdict['input']    
+    
+    # bit(s) to control the transaction set (rpmts_flags)
+    if optdict['allfiles']:
+        rpmts_flags |= rpm.RPMTRANS_FLAG_ALLFILES
+    if optdict['excludedocs']:
+        rpmts_flags |= rpm.RPMTRANS_FLAG_NODOCS
+    if optdict['justdb']:
+        rpmts_flags |= rpm.RPMTRANS_FLAG_JUSTDB
+    if optdict['noscripts']:
+        rpmts_flags |= rpm.RPMTRANS_FLAG_NOSCRIPTS
+    if optdict['notriggers']:
+        rpmts_flags |= rpm.RPMTRANS_FLAG_NOTRIGGERS
+    if optdict['repackage']:
+        rpmts_flags |= rpm.RPMTRANS_FLAG_REPACKAGE
+    if optdict['test']:
+        rpmts_flags |= rpm.RPMTRANS_FLAG_TEST
+        
+    # bit(s) for filtering mechanism (rpmprob_filter)
+    if optdict['force']:
+        rpmprob_filter |= rpm.RPMPROB_FILTER_OLDPACKAGE | \
+                          rpm.RPMPROB_FILTER_REPLACEPKG | \
+                          rpm.RPMPROB_FILTER_REPLACENEWFILES | \
+                          rpm.RPMPROB_FILTER_REPLACEOLDFILES
+    if optdict['ignoresize']:
+        rpmprob_filter |= rpm.RPMPROB_FILTER_DISKSPACE | \
+                          rpm.RPMPROB_FILTER_DISKNODES
+    if optdict['ignorearch']:
+        rpmprob_filter |= rpm.RPMPROB_FILTER_IGNOREARCH
+    if optdict['ignoreos']:
+        rpmprob_filter |= rpm.RPMPROB_FILTER_IGNOREOS
+    if optdict['replacefiles']:
+        rpmprob_filter |= rpm.RPMPROB_FILTER_REPLACENEWFILES | \
+                          rpm.RPMPROB_FILTER_REPLACEOLDFILES
+    if optdict['replacepkgs']:
+        rpmprob_filter |= rpm.RPMPROB_FILTER_REPLACEPKG
+
+    # bit(s) for installation (interface_flags)    
+    if optdict['nodeps']:
+        interface_flags |= rpmt_Transaction.INSTALL_NODEPS
+    if optdict['noorder']:
+        interface_flags |= rpmt_Transaction.INSTALL_NOORDER
+
+    # bit(s) for verification (vsflags)    
+    if optdict['nodigest']:
+        vsflags |= rpm._RPMVSF_NODIGESTS
+    if optdict['nosignature']:
+        vsflags |= rpm._RPMVSF_NOSIGNATURES
+
+    ##############################################
+    # 2. parse the action file
+    ##############################################
+    if file == "":
+        sys.exit("No action file specified (use -i<FILE> or --in=<FILE>)")
+
+    try:       
+        as = rpmt_ActionsSet.rpmtActionsSet(str(file))
+    except IOError, error:
+        sys.exit(error)
+
+    t = rpmt_Transaction.rpmtTransaction(verbose, interface_flags, rpmts_flags, rpmprob_filter, vsflags, rootdir, cachedir, revproxylist, proxy_info)
+
+    # Process each action
+    action = as.nextAction()
+    while action:
+        if action.has_key('error'):
+            sys.stderr.write("%s\n" % action['error'])
+        else:
+            try:
+                if action['action'] == 'install':
+                    t.handleInstall(action['package'], action['options'])
+                elif action['action'] == 'upgrade':
+                    t.handleUpgrade(action['package'], action['options'])
+                elif action['action'] == 'erase':
+                    t.handleErase(action['package'], action['options'])
+            except OSError, err:
+                sys.exit("OSError: with package %s :\n %s" % (action['package'] , err))
+            except IOError, err:
+                sys.exit("IOError with package %s :\n %s" % (action['package'] , err))
+            except rpm.error, err:
+                sys.exit("rpm.error: with package %s :\n %s" % (action['package'] , err))
+            
+        action = as.nextAction()
+        
+    ##############################################
+    # 3. run the transaction set
+    ##############################################
+
+    try:
+        errors = t.run()
+        if not optdict['noclean']:
+            t.clean()
+    except rpm.error, err:
+        if optdict['forceclean']:        
+            t.clean()
+        sys.exit(err)
+        
+    if errors:
+        msg = "Error in Transaction:"
+        for descr in errors:
+            msg += "\n %s" % descr[0]
+
+        sys.exit(msg)
+
