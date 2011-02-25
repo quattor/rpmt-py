@@ -1,3 +1,8 @@
+2011-02-25  Christos Triantafyllidis,ctria@grid.auth.gr
+
+	* Release: 1.0.4
+	- Added support for modern distributions (RHEL6, Fedora etc).
+
 2008-10-17  "Luis Fernando"
 
 	* Release: 1.0.3

@@ -270,21 +270,40 @@ class rpmtTransaction:
 
         if errors:	    
             sys.stderr.write("Errors found:\n")
-            for ((name, version, release), (reqname, reqversion), \
-		flags, suggest, sense) in errors:
+            # After 4.8.0 RPM version the rpm-python bindings change
+            if self._rpm_version() > '4.8':
+                for ((name, version, release), (reqname, reqversion), \
+			flags, sense, suggest) in errors:
 		
-                if sense == rpm.RPMDEP_SENSE_REQUIRES:
-                    deperrors += 1
-                    msgs += (" depcheck: package %s %s-%s needs %s\n") % \
+                    if sense == rpm.RPMDEP_SENSE_REQUIRES:
+                        deperrors += 1
+                        msgs += (" depcheck: package %s %s-%s needs %s\n") % \
                             (name, version, release, self._formatRequire(reqname, reqversion, flags))
 		    
-                elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
-                    conferrors += 1
-                    msgs += (" depcheck: package %s %s-%s conflicts with %s\n") % \
+                    elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
+                        conferrors += 1
+                        msgs += (" depcheck: package %s %s-%s conflicts with %s\n") % \
                             (name, version, release, reqname)
 		
-                if self._verbose and suggest:
-                    print suggest
+                    if self._verbose and suggest:
+                        print suggest
+
+            else:
+                for ((name, version, release), (reqname, reqversion), \
+			flags, suggest, sense) in errors:
+		
+                    if sense == rpm.RPMDEP_SENSE_REQUIRES:
+                        deperrors += 1
+                        msgs += (" depcheck: package %s %s-%s needs %s\n") % \
+                            (name, version, release, self._formatRequire(reqname, reqversion, flags))
+		    
+                    elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
+                        conferrors += 1
+                        msgs += (" depcheck: package %s %s-%s conflicts with %s\n") % \
+                            (name, version, release, reqname)
+		
+                    if self._verbose and suggest:
+                        print suggest
 		    
             msgs += (" there were %d dependency problem(s) and %d conflict(s)\n") % (deperrors, conferrors)
 
@@ -392,6 +411,20 @@ class rpmtTransaction:
             if self._verbose:
                 print "Removing cache file %s" % (self._cachedir + file)
             os.remove(self._cachedir + file)
+
+    def _rpm_version(self):
+        """ This method returns the version of rpm package.
+        """
+
+        try:
+            rpm_ver=rpm.__version__
+        except AttributeError:
+            ts = rpm.TransactionSet()
+            mi = ts.dbMatch( 'name', 'rpm')
+            for h in mi:
+                rpm_ver = h['version']
+        return rpm_ver
+
    
 # Module Test   
 if __name__=="__main__":

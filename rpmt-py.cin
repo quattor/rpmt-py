@@ -142,14 +142,14 @@ if __name__=="__main__":
         sys.exit("No action file specified (use -i<FILE> or --in=<FILE>)")
 
     try:       
-        as = rpmt_ActionsSet.rpmtActionsSet(str(file))
+        rpmt_as = rpmt_ActionsSet.rpmtActionsSet(str(file))
     except IOError, error:
         sys.exit(error)
 
     t = rpmt_Transaction.rpmtTransaction(verbose, interface_flags, rpmts_flags, rpmprob_filter, vsflags, rootdir, cachedir, revproxylist, proxy_info)
 
     # Process each action
-    action = as.nextAction()
+    action = rpmt_as.nextAction()
     while action:
         if action.has_key('error'):
             sys.stderr.write("%s\n" % action['error'])
@@ -168,7 +168,7 @@ if __name__=="__main__":
             except rpm.error, err:
                 sys.exit("rpm.error: with package %s :\n %s" % (action['package'] , err))
             
-        action = as.nextAction()
+        action = rpmt_as.nextAction()
         
     ##############################################
     # 3. run the transaction set

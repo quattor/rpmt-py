@@ -79,18 +79,18 @@ class rpmtActionsSet:
 # Module Test
 if __name__=="__main__":
     try:       
-        as = rpmtActionsSet('test.rpmta')
+        rpmt_as = rpmtActionsSet('test.rpmta')
     except IOError, error:
         sys.exit(error)
 
     # Process each action
-    action = as.nextAction()
+    action = rpmt_as.nextAction()
     while action:
         try:
             print action['action'], action['package'], action['options']
         except KeyError:
             print action['error']
             
-        action = as.nextAction()
+        action = rpmt_as.nextAction()
 
     
