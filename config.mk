@@ -6,7 +6,7 @@ COMP=rpmt-py
 
 NAME=$(COMP)
 DESCR=RPMT - RPM Transactional (Python version)
-VERSION=1.0.4
+VERSION=1.0.5
 RELEASE=1
 
 AUTHOR=Nicolas Pinto <Nicolas.Pinto@cern.ch>
@@ -17,4 +17,4 @@ RPMT_CACHE=/var/cache/rpmt
 
 MANSECT=8
 
-DATE=25/02/11 16:24
+DATE=01/03/11 18:15

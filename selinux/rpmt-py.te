@@ -1,0 +1,9 @@
+module rpmtpy 1.0.0;
+
+# Dummy requirement to make checkmodule happy. We need this policy to
+# specify our own file contexts for rmpt-py.
+
+require {
+    type unconfined_t;
+}
+

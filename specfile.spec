@@ -17,6 +17,12 @@ Requires: rpm-python
 %description
 @DESCR@
 
+%package selinux
+Summary: SELinux policy for rpmt-py
+Group: @GROUP@/System
+
+%description selinux
+SELinux policy for rpmt-py, needed in RH6-based systems.
 
 %prep
 %setup
@@ -24,9 +30,24 @@ Requires: rpm-python
 %build
 make
 
+
 %install
 rm -rf $RPM_BUILD_ROOT
 make PREFIX=$RPM_BUILD_ROOT install
+
+%post selinux
+if [ "$1" == 1 ]
+then
+    semodule -i /usr/share/selinux/targeted/rpmt-py.pp
+elif [ "$1" == 2 ]
+    semodule -u /usr/share/selinux/targeted/rpmt-py.pp
+fi
+
+%preun selinux
+if [ "$1" == 0 ]
+then
+    semodule -r rpmtpy
+fi
 
 %files
 %defattr(-,root,root)
@@ -38,3 +59,6 @@ make PREFIX=$RPM_BUILD_ROOT install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%files selinux
+/usr/share/selinux/targeted/*
