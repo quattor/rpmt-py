@@ -43,6 +43,10 @@ elif [ "$1" == 2 ]
 then
     semodule -u /usr/share/selinux/targeted/rpmt-py.pp
 fi
+if [ -x /usr/bin/rpmt-py ]
+then
+    restorecon /usr/bin/rpmt-py
+fi
 
 %preun selinux
 if [ "$1" == 0 ]
