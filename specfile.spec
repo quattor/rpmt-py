@@ -40,14 +40,16 @@ if [ "$1" == 1 ]
 then
     semodule -i /usr/share/selinux/targeted/rpmt-py.pp
 elif [ "$1" == 2 ]
+then
     semodule -u /usr/share/selinux/targeted/rpmt-py.pp
 fi
 
 %preun selinux
 if [ "$1" == 0 ]
 then
-    semodule -r rpmtpy
+    semodule -r rpmtpy || true
 fi
+
 
 %files
 %defattr(-,root,root)
