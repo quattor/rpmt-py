@@ -1,4 +1,4 @@
-module rpmtpy 1.0.0;
+module rpmtpy @VERSION@;
 
 # Dummy requirement to make checkmodule happy. We need this policy to
 # specify our own file contexts for rmpt-py.

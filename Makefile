@@ -27,7 +27,9 @@ RPMPY_SOURCES = rpmt_ActionsSet.py rpmt_OptionParser.py \
 
 SELINUX_DIR = /usr/share/selinux/targeted/
 
-configure: $(COMP) $(RPMPY_SOURCES) $(COMP).pod
+SELINUX_FILES = selinux/rpmt-py.te selinux/rpmt-py.context
+
+configure: $(COMP) $(RPMPY_SOURCES) $(COMP).pod  $(SELINUX_FILES)
 
 
 ####################################################################
@@ -53,7 +55,7 @@ install: configure man selinux
 		install -m 0444 $$i $(PREFIX)/$(QTTR_DOC)/$$i ; \
 	done
 
-	install -m 0444 rpmt-py.pp $(PREFIX)/$(SELINUX_DIR)
+	@install -m 0444 rpmt-py.pp $(PREFIX)/$(SELINUX_DIR)
 
 epydoc: configure
 	@epydoc -o epydoc *.py
@@ -77,3 +79,4 @@ clean::
 	@rm -f *.pyc *.py
 	@rm -rf TEST
 	@rm -rf *pp tmp
+	@rm -rf $(SELINUX_FILES)
