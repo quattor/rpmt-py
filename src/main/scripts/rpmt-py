@@ -16,12 +16,12 @@ It combines all other modules and performs the following actions :
 import os, sys
 import rpm
 
-sys.path.append('@QTTR_PYTHLIB@/rpmt')
+sys.path.append('/usr/lib/python/rpmt')
 import rpmt_OptionParser
 import rpmt_ActionsSet
 import rpmt_Transaction
 
-__version__ = "@VERSION@"
+__version__ = "1.0.8"
 
 if __name__=="__main__":
 

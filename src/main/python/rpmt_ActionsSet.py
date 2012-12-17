@@ -8,7 +8,7 @@ action from a rpmt actions file.
 
 """
 
-__version__ = "@VERSION@"
+__version__ = "1.0.8"
 
 import os,sys
 
