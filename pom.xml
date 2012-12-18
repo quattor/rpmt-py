@@ -1,0 +1,233 @@
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.quattor.cfg.module</groupId>
+  <artifactId>rpmt-py</artifactId>
+
+  <packaging>pom</packaging>
+  <version>1.1.0-SNAPSHOT</version>
+  <name>Software Package Management Agent.</name>
+
+  <repositories>
+    <repository>
+      <id>quattor-releases</id>
+      <url>http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases/</url>
+    </repository>
+  </repositories>
+
+  <parent>
+    <groupId>org.quattor.maven</groupId>
+    <artifactId>build-profile</artifactId>
+    <version>1.26</version>
+  </parent>
+
+
+  <scm>
+    <connection>scm:git:git://github.com/quattor/rpmt-py.git</connection>
+    <developerConnection>scm:git:git@github.com:quattor/rpmt-py.git</developerConnection>
+    <url>https://github.com/quattor/rpmt-py</url>
+  </scm>
+
+
+  <licenses>
+    <license>
+      <name>Apache 2 License</name>
+      <url>http://www.opensource.org/licenses/apache2.0</url>
+      <comments>Copyright (c) Responsible Organization</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Luis Fernando Muñoz Mejías</name>
+      <email>Luis.Munoz@UGent.be</email>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+      <name>Germ&atilde;n Cancio Meli&atilde;</name>
+      <email>German.Cancio@cern.ch</email>
+      <roles>
+	<role>author</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Marco Emilio Poleggi</name>
+      <roles>
+	<role>author</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Nick Williams</name>
+      <email>nick.williams@morganstanley.com</email>
+      <roles>
+	<role>contributor</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Loïc Brarda</name>
+      <email>Loic.Brarda@cern.ch</email>
+    </contributor>
+    <contributor>
+      <name>Jan Iven</name>
+      <email>Jan.Iven@cern.ch</email>
+    </contributor>
+    <contributor>
+      <name>Michel Jouvin</name>
+      <email>jouvin@lal.in2p3.fr</email>
+    </contributor>
+    <contributor>
+      <name>Veronique Lefebure</name>
+      <email>Veronique.Lefebure@cern.ch</email>
+    </contributor>
+    <contributor>
+      <name>Marco Emilio Poleggi</name>
+      <email>marcoep@gmail.com</email>
+    </contributor>
+    <contributor>
+      <name>Guillaume Philippon</name>
+    </contributor>
+  </contributors>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+	<plugin>
+	  <groupId>org.codehaus.mojo</groupId>
+	  <artifactId>rpm-maven-plugin</artifactId>
+	  <configuration>
+	    <summary>RPMT - RPM Transactional (Python version)</summary>
+	    <name>rpmt-py</name>
+	    <provides>
+	      <provide>spma</provide>
+	    </provides>
+	    <needarch>noarch</needarch>
+	    <requires combine.self="override"/>
+	    <mappings combine.self="override">
+	      <mapping>
+		<directory>/usr/bin</directory>
+		<filemode>755</filemode>
+		<username>root</username>
+		<groupname>root</groupname>
+		<directoryIncluded>false</directoryIncluded>
+		<sources>
+		  <source>
+		    <location>target/bin</location>
+		    <excludes>
+		      <exclude>*.pod</exclude>
+		    </excludes>
+		  </source>
+		</sources>
+	      </mapping>
+	      <mapping>
+		<directory>/usr/share/doc/${project.artifactId}-${project.version}</directory>
+		<filemode>644</filemode>
+		<username>root</username>
+		<groupname>root</groupname>
+		<documentation>true</documentation>
+		<directoryIncluded>false</directoryIncluded>
+		<sources>
+		  <source>
+		    <location>${basedir}</location>
+		    <includes>
+		      <include>ChangeLog</include>
+		    </includes>
+		  </source>
+		</sources>
+	      </mapping>
+	      <mapping>
+		<directory>/var/cache/rpmt</directory>
+		<directoryIncluded>true</directoryIncluded>
+		<configuration>false</configuration>
+		<groupname>root</groupname>
+		<filemode>755</filemode>
+		<username>root</username>
+	      </mapping>
+	      <mapping>
+		<directory>/usr/lib/python/rpmt</directory>
+		<filemode>644</filemode>
+		<username>root</username>
+		<groupname>root</groupname>
+		<directoryIncluded>false</directoryIncluded>
+		<sources>
+		  <source>
+		    <location>target/lib/python/rpmt</location>
+		  </source>
+		</sources>
+		<documentation>false</documentation>
+		<configuration>false</configuration>
+	      </mapping>
+	    </mappings>
+	  </configuration>
+	</plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-resources-plugin</artifactId>
+	<executions>
+	  <execution>
+	    <id>filter-script-sources</id>
+	    <phase>process-sources</phase>
+	    <goals>
+	      <goal>copy-resources</goal>
+	    </goals>
+	    <configuration>
+	      <outputDirectory>${project.build.directory}/bin</outputDirectory>
+	      <resources>
+		<resource>
+		  <directory>src/main/scripts</directory>
+		  <filtering>true</filtering>
+		  <includes>
+		    <include>**/*</include>
+		  </includes>
+		</resource>
+	      </resources>
+	    </configuration>
+	  </execution>
+	  <execution>
+	    <id>filter-perl-sources</id>
+	    <phase>process-sources</phase>
+	    <goals>
+	      <goal>copy-resources</goal>
+	    </goals>
+	    <configuration>
+	      <outputDirectory>${project.build.directory}/lib/python/rpmt</outputDirectory>
+	      <resources>
+		<resource>
+		  <directory>src/main/python</directory>
+		  <filtering>true</filtering>
+		  <includes>
+		    <include>**/*</include>
+		  </includes>
+		</resource>
+	      </resources>
+	    </configuration>
+	  </execution>
+	</executions>
+      </plugin>
+      <plugin>
+	<artifactId>maven-assembly-plugin</artifactId>
+	<extensions>true</extensions>
+	<executions>
+	  <execution>
+	    <id>tarballs</id>
+	    <configuration combine.self="override">
+	      <descriptors>
+		<descriptor>target/dependency/assemblies/bin.xml</descriptor>
+	      </descriptors>
+	    </configuration>
+	  </execution>
+	</executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>
