@@ -6,7 +6,7 @@
   <artifactId>rpmt-py</artifactId>
 
   <packaging>pom</packaging>
-  <version>1.2.2-SNAPSHOT</version>
+  <version>13.1-rc</version>
   <name>Software Package Management Agent.</name>
 
   <repositories>
